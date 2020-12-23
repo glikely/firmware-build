@@ -212,7 +212,8 @@ edk2-basetools:
 	source $(EDK2_PATH)/edksetup.sh && $(MAKE) -C $(EDK2_PATH)/BaseTools
 
 edk2-stmm: edk2-basetools
-	source $(EDK2_PATH)/edksetup.sh && build -p $(ACTIVE_PLATFORM) -b DEBUG -a AARCH64 -t GCC5 -D DO_X86EMU=TRUE
+	source $(EDK2_PATH)/edksetup.sh && build -p $(ACTIVE_PLATFORM) -b DEBUG -a AARCH64 -t GCC5 -D DO_X86EMU=TRUE \
+ -D MM_SECURE_STORAGE_ENABLE=TRUE -DUART_ENABLE=TRUE
 
 # Tell optee where to find StMM and add it as a dependency
 OPTEE_EXTRA += CFG_STMM_PATH=$(STMM_FD)
