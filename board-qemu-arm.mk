@@ -50,3 +50,6 @@ qemu-fip:
 
 qemu-semihosting:
 	cd output && $(QEMU_BIN) $(QEMU_BASE_CONFIG) -bios bl1.bin -semihosting-config enable,target=native $(QEMU_EXTRA)
+
+qemu-%-dbg: qemu-%;
+qemu-%-dbg: QEMU_EXTRA += -s -S
