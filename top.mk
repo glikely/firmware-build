@@ -203,9 +203,9 @@ ifeq ($(CONFIG_EFI_MM_COMM_TEE),y)
 export WORKSPACE=$(CURDIR)
 export PACKAGES_PATH=$(EDK2_PATH):$(EDK2_PLATFORMS_PATH)
 export GCC5_AARCH64_PREFIX=$(CROSS_COMPILE)
-export ACTIVE_PLATFORM=Platform/StMMRpmb/PlatformStandaloneMm.dsc
+export ACTIVE_PLATFORM ?= Platform/StMMRpmb/PlatformStandaloneMm.dsc
 
-STMM_FD := $(EDK2_OUTPUT)/MmStandaloneRpmb/DEBUG_GCC5/FV/BL32_AP_MM.fd
+STMM_FD ?= $(EDK2_OUTPUT)/MmStandaloneRpmb/DEBUG_GCC5/FV/BL32_AP_MM.fd
 
 PHONY += edk2-basetools edk2-stmm
 edk2-basetools:
