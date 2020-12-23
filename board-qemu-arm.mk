@@ -57,3 +57,6 @@ qemu-fip:
 
 qemu-semihosting:
 	cd output && qemu-system-aarch64 $(QEMU_BASE_CONFIG) -bios bl1.bin -semihosting-config enable,target=native $(QEMU_EXTRA)
+
+qemu-%-dbg: qemu-%;
+qemu-%-dbg: QEMU_EXTRA += -s -S
