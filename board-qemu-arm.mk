@@ -7,6 +7,9 @@ FLASH_IMAGE := nor_flash.bin
 
 OPTEE_EXTRA += CFG_RPMB_FS_DEV_ID=1
 
+QEMU_BIN ?= qemu-system-aarch64
+
+
 ifneq ($(CONFIG_TFABOOT)$(CONFIG_POSITION_INDEPENDENT),yy)
 tweakconfig:
 	echo "CONFIG_POSITION_INDEPENDENT=y" >> $(UBOOT_OUTPUT)/.config
@@ -44,7 +47,7 @@ QEMU_BASE_CONFIG += -drive if=virtio,format=raw,file=$(VIRTDISK)
 endif
 
 qemu-fip:
-	qemu-system-aarch64 $(QEMU_BASE_CONFIG) -bios $(FLASH_IMAGE) $(QEMU_EXTRA)
+	 $(QEMU_BIN) $(QEMU_BASE_CONFIG) -drive if=pflash,unit=0,file=$(FLASH_IMAGE) $(QEMU_EXTRA)
 
 qemu-semihosting:
 	cd output && qemu-system-aarch64 $(QEMU_BASE_CONFIG) -bios bl1.bin -semihosting-config enable,target=native $(QEMU_EXTRA)
