@@ -10,6 +10,12 @@ OPTEE_EXTRA += CFG_RPMB_FS_DEV_ID=1
 QEMU_BIN ?= qemu-system-aarch64
 
 
+# =====================================
+# TF-A TBBR enablement in Qemu
+TFA_EXTRA += GENERATE_COT=1
+TFA_EXTRA += TRUSTED_BOARD_BOOT=1
+TFA_EXTRA += MBEDTLS_DIR=mbed-tls
+
 ifneq ($(CONFIG_TFABOOT)$(CONFIG_POSITION_INDEPENDENT),yy)
 tweakconfig:
 	echo "CONFIG_POSITION_INDEPENDENT=y" >> $(UBOOT_OUTPUT)/.config
