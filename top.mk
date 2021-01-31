@@ -201,7 +201,7 @@ endif
 ifeq ($(CONFIG_OPTEE),y)
 # ----------------------------------------------------------------------
 # Standalone-MM build configuration
-ifeq ($(CONFIG_EFI_MM_COMM_TEE),y)
+#ifeq ($(CONFIG_EFI_MM_COMM_TEE),y)
 
 # EDK2 Environmental variables; easiest to export these
 export WORKSPACE=$(CURDIR)
@@ -209,7 +209,7 @@ export PACKAGES_PATH=$(EDK2_PATH):$(EDK2_PLATFORMS_PATH)
 export GCC5_AARCH64_PREFIX=$(CROSS_COMPILE)
 export ACTIVE_PLATFORM ?= Platform/StMMRpmb/PlatformStandaloneMm.dsc
 
-STMM_FD ?= $(EDK2_OUTPUT)/MmStandaloneRpmb/DEBUG_GCC5/FV/BL32_AP_MM.fd
+STMM_FD := $(EDK2_OUTPUT)/MmStandaloneRpmb/DEBUG_GCC5/FV/BL32_AP_MM.fd
 
 PHONY += edk2-basetools edk2-stmm
 edk2-basetools:
@@ -223,7 +223,7 @@ edk2-stmm: edk2-basetools
 OPTEE_EXTRA += CFG_STMM_PATH=$(STMM_FD)
 optee_os/all: edk2-stmm
 
-endif # ifeq($(CONFIG_EFI_MM_COMM_TEE),y)
+#endif # ifeq($(CONFIG_EFI_MM_COMM_TEE),y)
 
 # ----------------------------------------------------------------------
 # OP-TEE build configuration
@@ -234,9 +234,10 @@ OPTEE_EXTRA += CFG_ARM64_core=y
 OPTEE_EXTRA += CFG_RPMB_FS=y
 OPTEE_EXTRA += CFG_RPMB_WRITE_KEY=1
 OPTEE_EXTRA += CFG_CORE_HEAP_SIZE=524288
-#OPTEE_EXTRA += CFG_TEE_CORE_LOG_LEVEL=3
-#OPTEE_EXTRA += CFG_CORE_ASLR=n
-#OPTEE_EXTRA += CFG_TA_ASLR=n
+OPTEE_EXTRA += CFG_TEE_CORE_LOG_LEVEL=3
+OPTEE_EXTRA += CFG_CORE_ASLR=n
+OPTEE_EXTRA += CFG_TA_ASLR=n
+OPTEE_EXTRA += CFG_WITH_STMM_SP=y
 
 # Tell TFA where to find the OP-TEE binaries
 TFA_EXTRA += BL32=$(OPTEE_OUTPUT)/arm-plat-vexpress/core/tee-header_v2.bin
