@@ -10,6 +10,15 @@ RCW_TARGET_PATH := $(RCW_PATH)/$(CONFIG_SYS_CONFIG_NAME)
 TFA_PLAT := $(CONFIG_SYS_CONFIG_NAME)
 TFA_EXTRA += RCW=$(RCW_TARGET_PATH)/RCW/template.bin
 TFA_EXTRA += TRUSTED_BOARD_BOOT=0 GENERATE_COT=0 BOOT_MODE=auto SECURE_BOOT=false
+OPTEE_EXTRA += CFG_RPMB_FS_DEV_ID=1
+OPTEE_PLATFORM := ls
+OPTEE_PLATFORM_FLAVOR := lx2160ardb
+# In TF-A for LX2, the option for parsing header on optee is not supported.
+# It expects a binary which can be loaded in memory and where execution can 
+# start from.
+# This option forces an objcopy which converts elf into bin and the header 
+# gets removed.
+USE_TEE_BIN = TRUE
 
 FLASH_IMAGE := $(CONFIG_SYS_CONFIG_NAME)-sdcard.img
 

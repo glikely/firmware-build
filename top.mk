@@ -223,6 +223,9 @@ endif # ifeq($(CONFIG_EFI_MM_COMM_TEE),y)
 OPTEE_EXTRA += ARCH=arm
 OPTEE_EXTRA += CROSS_COMPILE32=arm-linux-gnueabihf-
 OPTEE_EXTRA += PLATFORM=$(OPTEE_PLATFORM)
+ifneq ($(OPTEE_PLATFORM_FLAVOR),)
+OPTEE_EXTRA += PLATFORM_FLAVOR=$(OPTEE_PLATFORM_FLAVOR)
+endif
 OPTEE_EXTRA += CFG_ARM64_core=y
 OPTEE_EXTRA += CFG_RPMB_FS=y
 OPTEE_EXTRA += CFG_RPMB_WRITE_KEY=1
@@ -232,14 +235,28 @@ OPTEE_EXTRA += CFG_CORE_HEAP_SIZE=524288
 #OPTEE_EXTRA += CFG_TA_ASLR=n
 
 # Tell TFA where to find the OP-TEE binaries
-TFA_EXTRA += BL32=$(OPTEE_OUTPUT)/arm-plat-vexpress/core/tee-header_v2.bin
-TFA_EXTRA += BL32_EXTRA1=$(OPTEE_OUTPUT)/arm-plat-vexpress/core/tee-pager_v2.bin
-TFA_EXTRA += BL32_EXTRA2=$(OPTEE_OUTPUT)/arm-plat-vexpress/core/tee-pageable_v2.bin
+ifneq ($(USE_TEE_BIN),)
+# On some platforms the option for parsing header on optee is not supported.
+# Those platforms expect a binary which can be loaded in memory and where 
+# execution can start from.
+# This option forces an objcopy which converts elf into bin and the header
+# gets removed.
+optee-tee-bin: optee_os/all
+	$(CROSS_COMPILE)objcopy -v -O binary  \
+		$(OPTEE_OUTPUT)/arm-plat-$(OPTEE_PLATFORM)/core/tee.elf \
+		$(OPTEE_OUTPUT)/arm-plat-$(OPTEE_PLATFORM)/core/tee.bin
+
+TFA_EXTRA += BL32=$(OPTEE_OUTPUT)/arm-plat-$(OPTEE_PLATFORM)/core/tee.bin
+FIP_DEPS += optee-tee-bin
+else
+TFA_EXTRA += BL32=$(OPTEE_OUTPUT)/arm-plat-$(OPTEE_PLATFORM)/core/tee-header_v2.bin
+TFA_EXTRA += BL32_EXTRA1=$(OPTEE_OUTPUT)/arm-plat-$(OPTEE_PLATFORM)/core/tee-pager_v2.bin
+TFA_EXTRA += BL32_EXTRA2=$(OPTEE_OUTPUT)/arm-plat-$(OPTEE_PLATFORM)/core/tee-pageable_v2.bin
+endif #ifeq($(USE_TEE_BIN),)
 TFA_EXTRA += BL32_RAM_LOCATION=tdram
 TFA_EXTRA += SPD=opteed
 
 FIP_DEPS += optee_os/all
-
 endif # ifeq($(CONFIG_OPTEE),y)
 
 # Default Trusted Firmware configuration settings
