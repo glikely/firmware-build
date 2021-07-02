@@ -160,6 +160,8 @@ INCLUDE_MK += scripts/board-$(subst ",,$(CONFIG_SYS_BOARD)).mk
 INCLUDE_MK += scripts/config-$(subst ",,$(CONFIG_SYS_CONFIG_NAME)).mk
 include $(wildcard $(INCLUDE_MK))
 
+DTB_TARGET ?= src/$(LINUX_ARCH)/$(subst ",,$(CONFIG_DEFAULT_FDT_FILE))
+
 ifeq ($(MAKECMDGOALS),info)
 info:
 	@echo 'U-Boot Config:'
@@ -173,6 +175,7 @@ info:
 	@echo 'Derived Config:'
 	@echo '  TFA_PLAT=$(TFA_PLAT)'
 	@echo '  FLASH_IMAGE=$(FLASH_IMAGE)'
+	@echo '  DTB_TARGET=$(DTB_TARGET)'
 	@echo 'Included platform configuration files:'
 	@$(foreach inc, $(wildcard $(INCLUDE_MK)), echo '  $(inc)';)
 else
@@ -285,7 +288,7 @@ endif # ifeq ($(dot-config),1)
 
 ifneq ($(DTB_TARGET),)
 PHONY += dtb
-dtb: ${DTB_TARGET}
+dtb: ${DT_OUTPUT}/${DTB_TARGET}
 	fdtput ${DT_OUTPUT}/${DTB_TARGET} -t s / u-boot-ver `cd ${UBOOT_PATH} && git describe`
 	fdtput ${DT_OUTPUT}/${DTB_TARGET} -t s / tfa-ver `cd ${TFA_PATH} && git describe`
 	fdtput ${DT_OUTPUT}/${DTB_TARGET} -t s / dt-ver `cd ${DT_PATH} && git describe`
@@ -308,7 +311,7 @@ distclean: u-boot/distclean tfa/distclean devicetree/clean optee_os/clean
 # ================================================
 # Delegate to devicetree-rebasing build
 #
-devicetree/%:
+${DT_OUTPUT}/% devicetree/%:
 	${MAKE} -C ${DT_PATH} $*
 
 # ================================================
